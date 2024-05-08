@@ -32,6 +32,8 @@ module "blog_vpc" {
 resource "aws_instance" "web" {
   ami           = data.aws_ami.app_ami.id
   instance_type = var.instance_type
+  subnet_id              = module.blog_vpc.public_subnets[0]
+  vpc_security_group_ids = [module.blog_sg.security_group_id]
 
   tags = {
     Name = "HelloWorld"
@@ -41,34 +43,10 @@ resource "aws_instance" "web" {
 module "alb" {
   source = "terraform-aws-modules/alb/aws"
 
-  name    = "blog-alb"
-  vpc_id  = module.blog_vpc.vpc_id
-  subnets = module.blog_vpc.public_subnets
-
-  # Security Group
-  security_group_ingress_rules = {
-    all_http = {
-      from_port   = 80
-      to_port     = 80
-      ip_protocol = "tcp"
-      description = "HTTP web traffic"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-    all_https = {
-      from_port   = 443
-      to_port     = 443
-      ip_protocol = "tcp"
-      description = "HTTPS web traffic"
-      cidr_ipv4   = "0.0.0.0/0"
-    }
-  }
-
-  security_group_egress_rules = {
-    all = {
-      ip_protocol = "-1"
-      cidr_ipv4   = "module.blog_vpc.vpc_cidr_block"
-    }
-  }
+  name            = "blog-alb"
+  vpc_id          = module.blog_vpc.vpc_id
+  subnets         = module.blog_vpc.public_subnets
+  security_groups = module.blog_sg.security_group_id
 
   access_logs = {
     bucket = "my-alb-logs"
@@ -90,6 +68,7 @@ module "alb" {
       protocol         = "HTTP"
       port             = 80
       target_type      = "instance"
+      target_id        = aws_instance.web.id
     }
   }
 
