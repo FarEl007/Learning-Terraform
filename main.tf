@@ -30,8 +30,8 @@ module "blog_vpc" {
 }
 
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.app_ami.id
-  instance_type = var.instance_type
+  ami                    = data.aws_ami.app_ami.id
+  instance_type          = var.instance_type
   subnet_id              = module.blog_vpc.public_subnets[0]
   vpc_security_group_ids = [module.blog_sg.security_group_id]
 
@@ -43,10 +43,10 @@ resource "aws_instance" "web" {
 module "alb" {
   source = "terraform-aws-modules/alb/aws"
 
-  name            = "blog-alb"
-  vpc_id          = module.blog_vpc.vpc_id
-  subnets         = module.blog_vpc.public_subnets
-  security_groups = module.blog_sg.security_group_id
+  name                   = "blog-alb"
+  vpc_id                 = module.blog_vpc.vpc_id
+  subnets                = module.blog_vpc.public_subnets
+  vpc_security_group_ids = module.blog_sg.security_group_id
 
   access_logs = {
     bucket = "my-alb-logs"
