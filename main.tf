@@ -63,11 +63,6 @@ module "alb" {
     }
   }
 
-
-  access_logs = {
-    bucket = "my-alb-logs"
-  }
-
   listeners = {
     default = {
       port     = 80
