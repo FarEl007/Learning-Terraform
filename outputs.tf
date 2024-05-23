@@ -1,3 +1,5 @@
 output "target_groups_arns" {
-    value = aws_alb_target_group.instance.arns
+    value = {
+        for key, tg in aws_lb_target_group.this : key => tg.arn
+    }
 }
