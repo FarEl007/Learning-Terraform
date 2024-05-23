@@ -1,3 +1,3 @@
 output "target_groups_arns" {
-    value = module.blog_alb.target_groups.arns
+    value = aws_alb_target_group.instance.arns
 }
