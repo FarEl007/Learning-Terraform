@@ -85,11 +85,6 @@ module "blog_alb" {
     }
   }
 
-  tags = {
-    Environment = "Dev"
-  }
-}
-
   additional_target_group_attachments = {
       ex-instance-other = {
         target_group_key = "instance"
@@ -98,6 +93,13 @@ module "blog_alb" {
         port             = "80"
       }
     }
+
+  tags = {
+    Environment = "Dev"
+  }
+}
+
+  
 
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
