@@ -90,6 +90,15 @@ module "blog_alb" {
   }
 }
 
+  additional_target_group_attachments = {
+      ex-instance-other = {
+        target_group_key = "instance"
+        target_type      = "instance"
+        target_id        = aws_instance.other.id
+        port             = "80"
+      }
+    }
+
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "4.13.0"
