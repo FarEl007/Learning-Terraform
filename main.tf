@@ -41,6 +41,7 @@ module "autoscaling" {
   security_groups     = [module.blog_sg.security_group_id]
   image_id            = data.aws_ami.app_ami.id
   instance_type       = var.instance_type
+  target_group_arns   = "${aws_lb_target_group.instance.arn}"
 }
 
 module "blog_alb" {
@@ -89,7 +90,6 @@ module "blog_alb" {
       ex-instance-other = {
         target_group_key = "instance"
         target_type      = "instance"
-        target_id        = aws_instance.other.id
         port             = "80"
       }
     }
