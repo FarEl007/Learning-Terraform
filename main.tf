@@ -41,7 +41,6 @@ module "autoscaling" {
   security_groups     = [module.blog_sg.security_group_id]
   image_id            = data.aws_ami.app_ami.id
   instance_type       = var.instance_type
-  target_group_arns   = "${aws_lb_target_group.instance.arn}"
 }
 
 module "blog_alb" {
@@ -86,20 +85,15 @@ module "blog_alb" {
     }
   }
 
-  additional_target_group_attachments = {
-      ex-instance-other = {
-        target_group_key = "instance"
-        target_type      = "instance"
-        port             = "80"
-      }
-    }
-
   tags = {
     Environment = "Dev"
   }
 }
 
-  
+resource "aws_autoscaling_attachment" "blog" {
+  autoscaling_group_name = aws_autoscaling_group.blog.id
+  alb_target_group_arn   = aws_lb_target_group.instance.arn
+}  
 
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
